@@ -1,7 +1,27 @@
 "use client";
 
-import Head from "next/head";
 import * as Sentry from "@sentry/nextjs";
+import Head from "next/head";
+
+
+const fakeError = async () => {
+  await Sentry.startSpan({
+    name: 'Example Frontend Span',
+    op: 'test'
+  }, async () => {
+    const res = await fetch("/api/sentry-example-api");
+    if (!res.ok) {
+      throw new Error("Sentry Example Frontend Error");
+    }
+  });
+}
+const fakeError2 = async () => {
+  const res = await fetch("/api/sentry-example-api");
+  if (!res.ok) {
+    throw new Error("Sentry Example Frontend Error");
+  }
+}
+
 
 export default function Page() {
   return (
@@ -48,17 +68,7 @@ export default function Page() {
             fontSize: "14px",
             margin: "18px",
           }}
-          onClick={async () => {
-            await Sentry.startSpan({
-              name: 'Example Frontend Span',
-              op: 'test'
-            }, async () => {
-              const res = await fetch("/api/sentry-example-api");
-              if (!res.ok) {
-                throw new Error("Sentry Example Frontend Error");
-              }
-            });
-          }}
+          onClick={fakeError2}
         >
           Throw error!
         </button>
